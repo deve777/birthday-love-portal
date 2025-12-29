@@ -1,40 +1,72 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Send, Sparkles } from "lucide-react";
+import { Heart, Send, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import emailjs from "emailjs-com";
 
 const HeartRain = () => {
-  const [hearts, setHearts] = useState<{ id: number; x: number; size: number; delay: number }[]>([]);
+  const [hearts, setHearts] = useState<
+    { id: number; x: number; drift: number; size: number; delay: number }[]
+  >([]);
   const [isRaining, setIsRaining] = useState(false);
   const [totalHearts, setTotalHearts] = useState(0);
+  const [sending, setSending] = useState(false);
 
   const startRain = () => {
     if (isRaining) return;
-    
+
     setIsRaining(true);
-    const newHearts: typeof hearts = [];
-    
+    const newHearts = [];
+
     for (let i = 0; i < 30; i++) {
       newHearts.push({
         id: Date.now() + i,
-        x: Math.random() * 100,
+        x: Math.random() * 100,               // start anywhere
+        drift: (Math.random() - 0.5) * 40,    // horizontal movement
         size: 16 + Math.random() * 24,
-        delay: Math.random() * 2,
+        delay: Math.random() * 1.5,
       });
     }
-    
+
     setHearts(prev => [...prev, ...newHearts]);
     setTotalHearts(prev => prev + 30);
-    
+
     toast({
       title: "💕 Heart Shower!",
       description: `You've sent ${totalHearts + 30} hearts of love!`,
     });
 
-    setTimeout(() => {
-      setIsRaining(false);
-    }, 3000);
+    setTimeout(() => setIsRaining(false), 3000);
+  };
+
+  // ✅ SEND HEART COUNT EMAIL
+  const sendHeartCount = async () => {
+    if (totalHearts === 0) return;
+
+    setSending(true);
+
+    try {
+      await emailjs.send(
+        "service_6q4to35",
+        "template_evigund",
+        { hearts: totalHearts },
+        "mTW_GsJ9aYMictjvn"
+      );
+
+      toast({
+        title: "💌 Hearts sent!",
+        description: "I received your love shower ❤️",
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Error 😔",
+        description: "Could not send hearts count",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -44,14 +76,22 @@ const HeartRain = () => {
         <motion.div
           key={heart.id}
           initial={{ y: -50, x: `${heart.x}%`, opacity: 1 }}
-          animate={{ y: "100vh", opacity: 0 }}
-          transition={{ duration: 3, delay: heart.delay, ease: "easeIn" }}
+          animate={{
+            y: "110vh",
+            x: `${heart.x + heart.drift}%`,
+            opacity: 0,
+          }}
+          transition={{
+            duration: 3,
+            delay: heart.delay,
+            ease: "easeIn",
+          }}
           className="absolute pointer-events-none"
           onAnimationComplete={() => {
             setHearts(prev => prev.filter(h => h.id !== heart.id));
           }}
         >
-          <Heart 
+          <Heart
             className="text-primary fill-primary"
             style={{ width: heart.size, height: heart.size }}
           />
@@ -73,6 +113,7 @@ const HeartRain = () => {
           </p>
         </motion.div>
 
+        {/* RAIN BUTTON */}
         <motion.button
           onClick={startRain}
           disabled={isRaining}
@@ -84,10 +125,7 @@ const HeartRain = () => {
             "disabled:opacity-70 disabled:cursor-not-allowed",
             !isRaining && "hover:shadow-glow hover:scale-105"
           )}
-          whileHover={!isRaining ? { scale: 1.05 } : {}}
           whileTap={!isRaining ? { scale: 0.95 } : {}}
-          animate={isRaining ? { scale: [1, 1.1, 1] } : {}}
-          transition={isRaining ? { duration: 0.5, repeat: Infinity } : {}}
         >
           <span className="flex items-center gap-3">
             {isRaining ? (
@@ -106,13 +144,28 @@ const HeartRain = () => {
           </span>
         </motion.button>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mt-6 font-body text-muted-foreground"
-        >
-          Total hearts sent: <span className="text-primary font-bold">{totalHearts}</span> 💕
-        </motion.p>
+        {/* TOTAL + SEND BUTTON */}
+        <div className="mt-6 flex flex-col items-center gap-4">
+          <p className="font-body text-muted-foreground">
+            Total hearts sent:{" "}
+            <span className="text-primary font-bold">{totalHearts}</span> 💕
+          </p>
+
+          <button
+            onClick={sendHeartCount}
+            disabled={sending || totalHearts === 0}
+            className={cn(
+              "flex items-center gap-2 px-6 py-2 rounded-full",
+              "bg-primary text-primary-foreground font-semibold",
+              "transition-all",
+              (sending || totalHearts === 0) &&
+                "opacity-60 cursor-not-allowed"
+            )}
+          >
+            {sending && <Loader2 className="w-4 h-4 animate-spin" />}
+            {sending ? "Sending…" : "Send Hearts 💌"}
+          </button>
+        </div>
       </div>
     </section>
   );

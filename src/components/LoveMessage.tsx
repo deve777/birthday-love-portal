@@ -15,27 +15,19 @@ const LoveMessage = ({ message, author }: LoveMessageProps) => {
       {/* Decorative background */}
       <div className="absolute inset-0 bg-gradient-dreamy rounded-3xl transform rotate-1" />
       <div className="absolute inset-0 bg-gradient-dreamy rounded-3xl transform -rotate-1 opacity-50" />
-      
+
       <div
         className={cn(
           "relative p-8 md:p-12 rounded-3xl",
           "bg-card/90 backdrop-blur-md",
-          "border-2 border-primary/30",
           "shadow-romantic",
           "transition-all duration-700",
           isRevealed ? "scale-100" : "scale-95"
         )}
       >
-        {/* Quote icon */}
+        {/* Quote icons */}
         <Quote className="absolute top-4 left-4 w-8 h-8 text-primary/30 transform -scale-x-100" />
         <Quote className="absolute bottom-4 right-4 w-8 h-8 text-primary/30" />
-
-        {/* Hearts decoration */}
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-          <Heart className="w-6 h-6 text-primary fill-primary animate-float" />
-          <Heart className="w-8 h-8 text-coral fill-coral animate-float" style={{ animationDelay: "0.5s" }} />
-          <Heart className="w-6 h-6 text-primary fill-primary animate-float" style={{ animationDelay: "1s" }} />
-        </div>
 
         {/* Content */}
         <div className="text-center pt-4">
@@ -48,8 +40,8 @@ const LoveMessage = ({ message, author }: LoveMessageProps) => {
               )}
             >
               <div className="relative">
-                <Heart 
-                  className="w-20 h-20 text-primary animate-pulse-glow cursor-pointer transition-transform hover:scale-110" 
+                <Heart
+                  className="w-20 h-20 text-primary animate-pulse-glow cursor-pointer transition-transform hover:scale-110"
                   fill="currentColor"
                 />
                 <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-gold animate-sparkle" />
@@ -76,8 +68,14 @@ const LoveMessage = ({ message, author }: LoveMessageProps) => {
         {isRevealed && (
           <>
             <Sparkles className="absolute top-1/4 left-8 w-5 h-5 text-gold animate-sparkle" />
-            <Sparkles className="absolute top-1/3 right-8 w-4 h-4 text-coral animate-sparkle" style={{ animationDelay: "0.5s" }} />
-            <Sparkles className="absolute bottom-1/4 left-12 w-4 h-4 text-champagne animate-sparkle" style={{ animationDelay: "1s" }} />
+            <Sparkles
+              className="absolute top-1/3 right-8 w-4 h-4 text-coral animate-sparkle"
+              style={{ animationDelay: "0.5s" }}
+            />
+            <Sparkles
+              className="absolute bottom-1/4 left-12 w-4 h-4 text-champagne animate-sparkle"
+              style={{ animationDelay: "1s" }}
+            />
           </>
         )}
       </div>

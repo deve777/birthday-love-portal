@@ -24,12 +24,12 @@ const Footer = () => {
         </h3>
         
         <p className="font-body text-lg text-muted-foreground mb-8">
-          Made with infinite love, just for you 💕
+          Made with infinite love, just for My Queen 👸💕
         </p>
 
         <div className="flex items-center justify-center gap-2 text-muted-foreground">
           <Heart className="w-5 h-5 text-primary fill-primary" />
-          <span className="font-body">Happy Birthday, My Love</span>
+          <span className="font-body">Happy Birthday, My Baby</span>
           <Heart className="w-5 h-5 text-primary fill-primary" />
         </div>
 

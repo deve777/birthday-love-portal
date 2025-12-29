@@ -22,7 +22,7 @@ const Index = () => {
   };
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden">
+    <main className="relative min-h-screen overflow-x-hidden" >
       {/* Floating hearts background */}
       <FloatingHearts />
       

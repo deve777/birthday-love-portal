@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Sparkles } from "lucide-react";
+import { Star, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import emailjs from "emailjs-com";
+
+const RADIUS = 42;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const WishingStar = () => {
   const [isHolding, setIsHolding] = useState(false);
@@ -10,19 +14,21 @@ const WishingStar = () => {
   const [completed, setCompleted] = useState(false);
   const [wish, setWish] = useState("");
   const [showInput, setShowInput] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [sending, setSending] = useState(false);
+
+  const intervalRef = useRef<number | null>(null);
 
   const [shootingStars, setShootingStars] = useState<
     { id: number; x: number; delay: number }[]
   >([]);
 
-  // HOLD LOGIC (SMOOTH & RELIABLE)
+  /* HOLD LOGIC */
   useEffect(() => {
     if (isHolding && progress < 100 && !completed) {
-      intervalRef.current = setInterval(() => {
+      intervalRef.current = window.setInterval(() => {
         setProgress(prev => {
           if (prev >= 100) {
-            clearInterval(intervalRef.current!);
+            window.clearInterval(intervalRef.current!);
             setCompleted(true);
             triggerCompletion();
             return 100;
@@ -33,14 +39,13 @@ const WishingStar = () => {
     }
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) window.clearInterval(intervalRef.current);
     };
   }, [isHolding]);
 
   const triggerCompletion = () => {
     setShowInput(true);
 
-    // Shooting stars
     setShootingStars(
       Array.from({ length: 12 }, (_, i) => ({
         id: Date.now() + i,
@@ -51,7 +56,7 @@ const WishingStar = () => {
 
     toast({
       title: "⭐ Wish made!",
-      description: "Now write your wish… it will reach the stars ✨",
+      description: "Now write your wish… ✨",
     });
   };
 
@@ -62,27 +67,40 @@ const WishingStar = () => {
     }
   };
 
+  /* SEND WISH */
   const sendWish = async () => {
-    if (!wish.trim()) return;
+    if (!wish.trim()) {
+      toast({
+        title: "Write something ✨",
+        description: "Your wish can’t be empty 💕",
+      });
+      return;
+    }
+
+    setSending(true);
 
     try {
-      await fetch("/api/send-wish", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ wish }),
-      });
+      await emailjs.send(
+        "service_6q4to35",
+        "template_scdba6p",
+        { wish },
+        "mTW_GsJ9aYMictjvn"
+      );
 
       toast({
         title: "💌 Wish sent!",
-        description: "Your wish has been sent with love ✨",
+        description: "I received your wish ❤️",
       });
 
       setShowInput(false);
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast({
-        title: "Error",
-        description: "Wish could not be sent 😔",
+        title: "Error 😔",
+        description: "Wish could not be sent",
       });
+    } finally {
+      setSending(false);
     }
   };
 
@@ -93,7 +111,7 @@ const WishingStar = () => {
         {shootingStars.map(star => (
           <motion.div
             key={star.id}
-            initial={{ x: `${star.x}%`, y: -50, opacity: 1 }}
+            initial={{ x: `${star.x}%`, y: -50 }}
             animate={{ y: "110vh", opacity: 0 }}
             transition={{ duration: 1.2, delay: star.delay }}
             className="absolute"
@@ -126,16 +144,23 @@ const WishingStar = () => {
           )}
           whileTap={{ scale: 0.95 }}
         >
-          {/* Progress Ring */}
-          <svg className="absolute inset-0 w-full h-full -rotate-90">
+          {/* PERFECT PROGRESS RING */}
+          <svg
+            className="absolute inset-0 w-full h-full -rotate-90"
+            viewBox="0 0 100 100"
+          >
             <circle
-              cx="50%"
-              cy="50%"
-              r="45%"
+              cx="50"
+              cy="50"
+              r={RADIUS}
               fill="none"
               stroke="hsl(var(--gold))"
-              strokeWidth="3"
-              strokeDasharray={`${progress * 2.83} 283`}
+              strokeWidth="4"
+              strokeDasharray={CIRCUMFERENCE}
+              strokeDashoffset={
+                CIRCUMFERENCE - (progress / 100) * CIRCUMFERENCE
+              }
+              strokeLinecap="round"
             />
           </svg>
 
@@ -148,10 +173,12 @@ const WishingStar = () => {
             )}
           />
 
-          {isHolding && <Sparkles className="absolute top-2 right-2 text-gold" />}
+          {isHolding && (
+            <Sparkles className="absolute top-2 right-2 text-gold" />
+          )}
         </motion.button>
 
-        {/* INPUT POPUP */}
+        {/* INPUT */}
         <AnimatePresence>
           {showInput && (
             <motion.div
@@ -169,11 +196,18 @@ const WishingStar = () => {
                 rows={3}
                 placeholder="My wish is..."
               />
+
               <button
                 onClick={sendWish}
-                className="bg-gradient-romantic text-white px-6 py-2 rounded-full"
+                disabled={sending}
+                className={cn(
+                  "flex items-center justify-center gap-2 w-full",
+                  "bg-gradient-romantic text-white px-6 py-2 rounded-full",
+                  sending && "opacity-70 cursor-not-allowed"
+                )}
               >
-                Send my wish 💖
+                {sending && <Loader2 className="w-4 h-4 animate-spin" />}
+                {sending ? "Sending…" : "Send my wish 💖"}
               </button>
             </motion.div>
           )}
