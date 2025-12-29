@@ -31,7 +31,7 @@ const Index = () => {
       
       {/* Hero section */}
       <BirthdayHero 
-        name="My Love" 
+        name="Simmu" 
         onCelebrate={handleCelebrate}
       />
 
