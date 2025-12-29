@@ -16,17 +16,20 @@ const FlipCard = ({ front, back, delay = 0 }: FlipCardProps) => {
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: delay / 1000, duration: 0.5 }}
+      transition={{ delay: delay / 1000, duration: 0.4 }}
       className="perspective-1000"
     >
       <motion.div
         className={cn(
           "relative w-full h-48 cursor-pointer",
-          "transform-style-3d transition-transform duration-700"
+          "transform-style-3d"
         )}
-        onClick={() => setIsFlipped(!isFlipped)}
+        onClick={() => setIsFlipped(prev => !prev)}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
+        transition={{
+          duration: 0.35,
+          ease: "easeInOut",
+        }}
         style={{ transformStyle: "preserve-3d" }}
       >
         {/* Front */}
@@ -56,7 +59,10 @@ const FlipCard = ({ front, back, delay = 0 }: FlipCardProps) => {
             "flex items-center justify-center text-center",
             "backface-hidden"
           )}
-          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+          style={{
+            backfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+          }}
         >
           <p className="font-body text-lg text-foreground leading-relaxed">
             {back}
@@ -74,7 +80,7 @@ const ReasonsILoveYou = () => {
     { front: "Reason #3", back: "How you make ordinary moments feel like magical adventures ✨" },
     { front: "Reason #4", back: "Your kindness and the way you care for everyone around you 💕" },
     { front: "Reason #5", back: "The way you look at me like I'm your whole universe 🌟" },
-    { front: "Reason #6", back: "Simply because you're YOU - perfect in every way! 👑" },
+    { front: "Reason #6", back: "Simply because you're YOU - perfect in every way! 👑 & I don't need reasons to love you I JUST LOVE YOU❤️💋" },
   ];
 
   return (

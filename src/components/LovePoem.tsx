@@ -50,7 +50,7 @@ const LovePoem = () => {
     "You are my peace, my calm, my joys.",
     "Every moment spent with you,",
     "Makes all my dreams come true.",
-    "Happy Birthday, my heart, my soul,",
+    "Happy Birthday,meri jaan, my soul,",
     "With you, I finally feel whole. 💕",
   ];
 

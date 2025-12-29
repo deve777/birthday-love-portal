@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Gift, X, Sparkles, Crown, Star } from "lucide-react";
+import { Heart, Gift, Sparkles, Crown, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SurpriseBox = () => {
@@ -39,8 +39,10 @@ const SurpriseBox = () => {
             Surprise Gift Box
           </h2>
           <p className="font-body text-lg text-muted-foreground">
-            {!isOpen 
-              ? `Click the box ${3 - shakeCount} more time${3 - shakeCount !== 1 ? 's' : ''} to open!` 
+            {!isOpen
+              ? `Click the box ${3 - shakeCount} more time${
+                  3 - shakeCount !== 1 ? "s" : ""
+                } to open!`
               : "Your surprises await! 🎁"}
           </p>
         </motion.div>
@@ -56,10 +58,14 @@ const SurpriseBox = () => {
                   "bg-gradient-romantic shadow-romantic",
                   "border-4 border-gold/50"
                 )}
-                animate={shakeCount > 0 ? {
-                  rotate: [0, -10, 10, -10, 10, 0],
-                  scale: [1, 1.05, 1],
-                } : {}}
+                animate={
+                  shakeCount > 0
+                    ? {
+                        rotate: [0, -10, 10, -10, 10, 0],
+                        scale: [1, 1.05, 1],
+                      }
+                    : {}
+                }
                 transition={{ duration: 0.5 }}
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
@@ -67,7 +73,7 @@ const SurpriseBox = () => {
                 {/* Ribbon */}
                 <div className="absolute inset-y-0 left-1/2 w-8 -translate-x-1/2 bg-gold/80" />
                 <div className="absolute inset-x-0 top-1/2 h-8 -translate-y-1/2 bg-gold/80" />
-                
+
                 {/* Bow */}
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <div className="flex gap-1">
@@ -78,12 +84,15 @@ const SurpriseBox = () => {
                 </div>
 
                 <Gift className="w-16 h-16 text-primary-foreground relative z-10" />
-                
+
                 {/* Sparkles */}
                 {shakeCount > 0 && (
                   <>
                     <Sparkles className="absolute top-2 right-2 w-6 h-6 text-gold animate-sparkle" />
-                    <Sparkles className="absolute bottom-2 left-2 w-5 h-5 text-champagne animate-sparkle" style={{ animationDelay: "0.3s" }} />
+                    <Sparkles
+                      className="absolute bottom-2 left-2 w-5 h-5 text-champagne animate-sparkle"
+                      style={{ animationDelay: "0.3s" }}
+                    />
                   </>
                 )}
               </motion.button>
@@ -93,81 +102,83 @@ const SurpriseBox = () => {
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                className="grid grid-cols-2 gap-4"
+                className="flex flex-col items-center"
               >
-                {surprises.map((surprise, index) => {
-                  const Icon = surprise.icon;
-                  return (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 50, scale: 0 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ delay: index * 0.15 }}
-                      className={cn(
-                        "p-6 rounded-2xl bg-card",
-                        "border-2 border-primary/20",
-                        "shadow-soft hover:shadow-romantic transition-all duration-300",
-                        "cursor-pointer hover:scale-105"
-                      )}
-                    >
-                      <Icon className={cn("w-10 h-10 mx-auto mb-2", surprise.color)} />
-                      <p className="font-body font-semibold text-foreground">{surprise.text}</p>
-                    </motion.div>
-                  );
-                })}
+                {/* Surprise cards */}
+                <div className="grid grid-cols-2 gap-6 justify-center">
+                  {surprises.map((surprise, index) => {
+                    const Icon = surprise.icon;
+                    return (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 40, scale: 0 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ delay: index * 0.15 }}
+                        className={cn(
+                          "p-6 rounded-2xl bg-card",
+                          "border-2 border-primary/20",
+                          "shadow-soft hover:shadow-romantic transition-all duration-300",
+                          "cursor-default"
+                        )}
+                      >
+                        <Icon
+                          className={cn(
+                            "w-10 h-10 mx-auto mb-2",
+                            surprise.color
+                          )}
+                        />
+                        <p className="font-body font-semibold text-foreground">
+                          {surprise.text}
+                        </p>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* Message below boxes */}
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.9 }}
+                  className="mt-8 font-body text-lg text-muted-foreground text-center max-w-md"
+                >
+                  Also jaan, you will receive your birthday gift today afternoon 🎁✨  
+                  How can I ever forget that? 💖
+                </motion.p>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Floating particles when opening */}
+          {/* Floating hearts */}
           <AnimatePresence>
-            {isOpen && (
-              <>
-                {[...Array(12)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ 
-                      x: 0, 
-                      y: 0, 
-                      scale: 1,
-                      opacity: 1 
+            {isOpen &&
+              [...Array(12)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+                  animate={{
+                    x: (Math.random() - 0.5) * 300,
+                    y: (Math.random() - 0.5) * 300 - 100,
+                    scale: 0,
+                    opacity: 0,
+                  }}
+                  transition={{ duration: 1, delay: i * 0.05 }}
+                  className="absolute top-1/2 left-1/2 pointer-events-none"
+                >
+                  <Heart
+                    className="w-4 h-4 fill-current"
+                    style={{
+                      color: [
+                        "hsl(350, 80%, 65%)",
+                        "hsl(15, 80%, 75%)",
+                        "hsl(40, 70%, 55%)",
+                      ][i % 3],
                     }}
-                    animate={{ 
-                      x: (Math.random() - 0.5) * 300,
-                      y: (Math.random() - 0.5) * 300 - 100,
-                      scale: 0,
-                      opacity: 0,
-                    }}
-                    transition={{ duration: 1, delay: i * 0.05 }}
-                    className="absolute top-1/2 left-1/2 pointer-events-none"
-                  >
-                    <Heart 
-                      className="w-4 h-4 fill-current"
-                      style={{ 
-                        color: ['hsl(350, 80%, 65%)', 'hsl(15, 80%, 75%)', 'hsl(40, 70%, 55%)'][i % 3]
-                      }}
-                    />
-                  </motion.div>
-                ))}
-              </>
-            )}
+                  />
+                </motion.div>
+              ))}
           </AnimatePresence>
         </div>
-
-        {isOpen && (
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            onClick={() => {
-              setIsOpen(false);
-              setShakeCount(0);
-            }}
-            className="mt-8 text-muted-foreground hover:text-primary transition-colors font-body"
-          >
-            Reset gift box?
-          </motion.button>
-        )}
       </div>
     </section>
   );

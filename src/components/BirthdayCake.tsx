@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
 const BirthdayCake = () => {
@@ -11,103 +10,88 @@ const BirthdayCake = () => {
 
   const blowCandle = (index: number) => {
     if (!candlesLit[index]) return;
-    
-    const newCandles = [...candlesLit];
-    newCandles[index] = false;
-    setCandlesLit(newCandles);
 
-    // Check if all candles are blown
-    if (newCandles.every(c => !c)) {
+    const updated = [...candlesLit];
+    updated[index] = false;
+    setCandlesLit(updated);
+
+    if (updated.every(c => !c)) {
       setAllBlown(true);
       setTimeout(() => {
         setShowWish(true);
         toast({
           title: "🎂 Make a Wish!",
-          description: "All candles blown! Your wish will come true! ✨",
+          description: "All candles blown! Your wish will come true ✨",
         });
       }, 500);
     }
   };
 
-  const resetCandles = () => {
-    setCandlesLit([true, true, true, true, true]);
-    setAllBlown(false);
-    setShowWish(false);
-  };
-
   return (
     <div className="relative flex flex-col items-center">
-      {/* Candles */}
-      <div className="flex gap-4 mb-2 relative z-10">
+      {/* Candles (scaled to fit cake) */}
+      <div className="flex gap-3 mb-1 relative z-10">
         {candlesLit.map((isLit, index) => (
           <motion.button
             key={index}
             onClick={() => blowCandle(index)}
-            className="relative cursor-pointer group"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            className="relative cursor-pointer flex flex-col items-center"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
           >
-            {/* Candle stick */}
-            <div className="w-3 h-12 bg-gradient-to-b from-champagne to-coral rounded-t-sm" />
-            
             {/* Flame */}
             <AnimatePresence>
               {isLit && (
                 <motion.div
-                  initial={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0, y: -20 }}
-                  className="absolute -top-6 left-1/2 -translate-x-1/2"
+                  initial={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0, y: -12 }}
+                  animate={{ y: [0, -1.5, 0] }}
+                  transition={{ duration: 0.6, repeat: Infinity }}
+                  className="mb-0.5"
                 >
-                  <Flame 
-                    className="w-6 h-6 text-orange-400 fill-orange-300 animate-pulse drop-shadow-[0_0_8px_rgba(251,146,60,0.8)]" 
-                  />
+                  <Flame className="w-4 h-4 text-orange-400 fill-orange-300 drop-shadow-[0_0_6px_rgba(251,146,60,0.8)]" />
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Tooltip */}
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              Click to blow!
-            </span>
+            {/* Candle */}
+            <div className="w-2 h-8 bg-gradient-to-b from-champagne to-coral rounded-t-sm" />
           </motion.button>
         ))}
       </div>
 
-      {/* Cake layers */}
+      {/* Cake */}
       <div className="relative">
         {/* Top layer */}
-        <motion.div 
-          className="w-32 h-8 bg-gradient-to-b from-rose to-primary rounded-t-lg mx-auto shadow-lg"
-          animate={allBlown ? { scale: [1, 1.05, 1] } : {}}
-          transition={{ duration: 0.5 }}
+        <motion.div
+          className="w-44 h-10 bg-gradient-to-b from-rose to-primary rounded-t-xl mx-auto shadow-lg"
+          animate={allBlown ? { scale: [1, 1.04, 1] } : {}}
         >
-          <div className="absolute inset-x-2 top-1 h-1 bg-primary-foreground/30 rounded" />
+          <div className="absolute inset-x-4 top-1.5 h-1 bg-primary-foreground/30 rounded" />
         </motion.div>
-        
+
         {/* Middle layer */}
-        <motion.div 
-          className="w-40 h-10 bg-gradient-to-b from-coral to-champagne rounded-lg mx-auto shadow-lg -mt-1"
-          animate={allBlown ? { scale: [1, 1.05, 1] } : {}}
-          transition={{ duration: 0.5, delay: 0.1 }}
+        <motion.div
+          className="w-56 h-14 bg-gradient-to-b from-coral to-champagne rounded-xl mx-auto shadow-lg -mt-1"
+          animate={allBlown ? { scale: [1, 1.04, 1] } : {}}
+          transition={{ delay: 0.1 }}
         >
-          <div className="absolute inset-x-3 top-2 h-1 bg-primary-foreground/30 rounded" />
-          {/* Decorations */}
-          <div className="flex justify-around pt-3 px-4">
+          <div className="absolute inset-x-5 top-2 h-1 bg-primary-foreground/30 rounded" />
+          <div className="flex justify-around pt-5 px-6">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="w-2 h-2 rounded-full bg-primary" />
+              <div key={i} className="w-2.5 h-2.5 rounded-full bg-primary" />
             ))}
           </div>
         </motion.div>
-        
+
         {/* Bottom layer */}
-        <motion.div 
-          className="w-48 h-12 bg-gradient-to-b from-secondary to-rose-light rounded-lg mx-auto shadow-lg -mt-1"
-          animate={allBlown ? { scale: [1, 1.05, 1] } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
+        <motion.div
+          className="w-72 h-16 bg-gradient-to-b from-secondary to-rose-light rounded-xl mx-auto shadow-lg -mt-1"
+          animate={allBlown ? { scale: [1, 1.04, 1] } : {}}
+          transition={{ delay: 0.2 }}
         >
-          <div className="absolute inset-x-4 top-2 h-1 bg-primary-foreground/30 rounded" />
-          {/* Wave decoration */}
-          <div className="flex justify-around pt-4 px-6">
+          <div className="absolute inset-x-6 top-2 h-1 bg-primary-foreground/30 rounded" />
+          <div className="flex justify-around pt-6 px-8">
             {[...Array(7)].map((_, i) => (
               <div key={i} className="w-3 h-3 rounded-full bg-coral/50" />
             ))}
@@ -115,28 +99,24 @@ const BirthdayCake = () => {
         </motion.div>
 
         {/* Plate */}
-        <div className="w-56 h-4 bg-gradient-to-b from-muted to-muted/50 rounded-full mx-auto shadow-md" />
+        <div className="w-80 h-5 bg-gradient-to-b from-muted to-muted/50 rounded-full mx-auto shadow-md" />
       </div>
 
-      {/* Wish reveal */}
+      {/* Wish Granted (centered below cake) */}
       <AnimatePresence>
         {showWish && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            initial={{ opacity: 0, y: 12, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            className="absolute -bottom-20 left-1/2 -translate-x-1/2 text-center"
+            className="mt-4 text-center"
           >
-            <div className="flex items-center gap-2 text-primary">
+            <div className="flex items-center justify-center gap-2 text-primary">
               <Sparkles className="w-5 h-5 animate-sparkle" />
-              <span className="font-display text-xl font-bold">Wish Granted!</span>
+              <span className="font-display text-xl font-bold">
+                Wish Granted!
+              </span>
               <Sparkles className="w-5 h-5 animate-sparkle" />
             </div>
-            <button 
-              onClick={resetCandles}
-              className="mt-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              Light candles again?
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
